@@ -1,1 +1,1 @@
-this weather app gives the humidity condition and the temperature of a particular location
+this weather app gives the humidity condition and the temperature of a particular city
