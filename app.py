@@ -14,15 +14,16 @@ api_key = file_a["api_key"]["key"]
 
 def weather_get(city):
     final = requests.get(api_url.format(city, api_key))
+    # print(api_key)
     if final:
         json_file = final.json()
         city = json_file["name"]
         country = json_file["sys"]["country"]
-        k_temperature = json_file["main"]["temp"]
-        c_temperature = k_temperature - 273.15
-        f_temperature = (k_temperature - 273.15) * 9 / 5 + 32
+        c_temperature = json_file["main"]["temp"]
+        k_temperature = 273.15 - c_temperature
+        f_temperature = c_temperature * (9 / 5) + 32
         weather_condition = json_file["weather"][0]["main"]
-        result = (city, country, c_temperature, f_temperature, weather_condition)
+        result = (city, country, c_temperature, f_temperature, k_temperature, weather_condition)
 
         return result
     else:
@@ -31,11 +32,12 @@ def weather_get(city):
 
 def print_weather():
     city = searchbar.get()
+    # print(city)
     weather = weather_get(city)
     if weather:
-        city_location["text"] = "{}, {}".format(weather[0], weather[1])
-        city_temperature["text"] = "{:.2f} C, {:.2f} F".format(weather[2], weather[3])
-        city_weather["text"] = weather[4]
+        city_country["text"] = "{}, {}".format(weather[0], weather[1])
+        city_temperature["text"] = "{:.2f}°C, {:.2f}°F, {:.2f}K".format(weather[2], weather[3], weather[4])
+        city_weather["text"] = weather[5]
     else:
         messagebox.showerror(f"Error", f"Cannot find that city. Please enter a valid city name")
 
@@ -62,17 +64,17 @@ def callback(event):
 enter_city.bind("<FocusIn>", callback)
 enter_city.grid(row=0, column=0, ipady=5, padx=200, pady=50)
 
-search_button = Button(root, text="Search", width=20, fg="white", bg="lightblue", font="Hack 15", borderwidth=5, command=print_weather)
+search_button = Button(root, text="Search", width=20, fg="white", bg="blue", activeforeground="white", activebackground="black", font="Hack, 15", command=print_weather)
 search_button.grid(row=1, column=0, rowspan=1, ipady=5, padx=200)
 
-city_location = Label(root, text="", fg="white", font="Hack 15", bg="black")
-city_location.grid(row=3, column=0, ipady=5, padx=200, pady=1)
+city_country = Label(root, text="", fg="white", font="Hack 15", bg="black")
+city_country.grid(row=4, column=0, ipady=5, padx=200, pady=5)
 
 city_temperature = Label(root, text="", fg="white", font="Hack 15", bg="black")
-city_temperature.grid(row=4, column=0, ipady=5, padx=200, pady=1)
+city_temperature.grid(row=5, column=0, ipady=5, padx=200, pady=1)
 
 city_weather = Label(root, text="", fg="white", font="Hack 15", bg="black")
-city_weather.grid(row=5, column=0, ipady=5, padx=200, pady=1)
+city_weather.grid(row=6, column=0, ipady=5, padx=200, pady=1)
 
 root.mainloop()
 
